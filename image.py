@@ -1,13 +1,15 @@
+from Crypto.Util.Padding import pad
 from PIL import Image
 from utils import *
-from Crypto.Util.Padding import pad
+import matplotlib.pyplot as plt
+import cv2
 
 
-def generate_images(name, key, encrypt, decrypt, block_size, resize=None):
+def generate_images(name, key, encrypt, decrypt, block_size, scale):
     image = Image.open(f'{name}.png') 
 
-    if resize:
-        image = image.resize(resize)
+    if scale != (512, 512):
+        image = image.resize(scale)
 
     width, height = image.size
 
@@ -24,3 +26,14 @@ def generate_images(name, key, encrypt, decrypt, block_size, resize=None):
 
     image = Image.frombytes('RGB', (width, height), decrypted_bytes[:no_pad_size])
     image.save(f'output/decrypted_{name}_{width}x{height}.png')
+
+
+def histogram(name):
+    path = f'output/{name}.png'
+    image = cv2.imread(path, 0)
+
+    plt.hist(image.ravel(), 256, [0,255], edgecolor='none')
+    plt.title('histogram')
+
+    plt.savefig(f'output/{name}_hist.png')
+    plt.close()
