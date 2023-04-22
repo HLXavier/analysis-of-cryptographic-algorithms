@@ -1,6 +1,6 @@
 from Crypto.Cipher import AES
 from utils import *
-from image import *
+from stats import *
 
 
 def encrypt(plain_text, key):
@@ -15,13 +15,38 @@ def decrypt(cipher_text, key):
     return plain_text
 
 
-plain_text = str_to_hex('0A 0B 0C 0D 0F 01 02 03 04 05 06 07 08 09 1A 2B')
-key = str_to_hex('01 02 04 05 06 AA BB CC 44 DD EE 88 09 04 05 06')
+scales = [(128, 128), (256, 256), (512, 512)]
+names = ['lenna', 'panda', 'fruit']
 
 
-scale = (512, 512)
-name = 'lenna'
-generate_images(name, key, encrypt, decrypt, AES.block_size, scale)
+# key = random_bytes(16)
+# print(f'key: {hex_to_str(key)}')
+# for name in names:
+#     print('-'*20)
+#     print(name)
+#     print('-'*20)
+#     for scale in scales:
+#         print(f'{scale[0]}x{scale[1]}')
+#         generate_images(name, key, encrypt, decrypt, AES.block_size, scale)
+#         print()
 
-histogram(f'decrypted_{name}_{scale[0]}x{scale[1]}')
-histogram(f'encrypted_{name}_{scale[0]}x{scale[1]}')
+hist_names = []
+hist_names = hist_names + names
+
+for name in names:
+    for scale in scales:
+        hist_names.append(f'output/encrypted_{name}_{scale[0]}x{scale[1]}')
+        hist_names.append(f'output/decrypted_{name}_{scale[0]}x{scale[1]}')
+
+# for name in hist_names:
+#     print(name)
+
+# for name in hist_names:
+#     histogram(name)
+        
+for name in hist_names:
+    print(f'name: {name}')
+    entropy(name)
+    print()
+
+# avalanche(encrypt, decrypt)

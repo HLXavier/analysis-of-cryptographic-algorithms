@@ -1,0 +1,114 @@
+key: 7C EC 6B F4 75 7F 47 91 0A B5 F6 7B 93 2D 37 6F
+
+--------------------
+lenna
+--------------------
+128x128
+encryption time: 0.0024645328521728516
+decryption time: 7.796287536621094e-05
+
+256x256
+encryption time: 0.0001933574676513672
+decryption time: 6.890296936035156e-05
+
+512x512
+encryption time: 0.0003902912139892578
+decryption time: 0.0002815723419189453
+
+--------------------
+panda
+--------------------
+128x128
+encryption time: 0.0001723766326904297
+decryption time: 3.7670135498046875e-05
+
+256x256
+encryption time: 0.00019216537475585938
+decryption time: 9.322166442871094e-05
+
+512x512
+encryption time: 0.0004994869232177734
+decryption time: 0.00026035308837890625
+
+--------------------
+fruit
+--------------------
+128x128
+encryption time: 0.00018453598022460938
+decryption time: 3.743171691894531e-05
+
+256x256
+encryption time: 0.0003097057342529297
+decryption time: 0.00014638900756835938
+
+512x512
+encryption time: 0.00033473968505859375
+decryption time: 0.0004711151123046875
+
+
+---------------------------------------
+Entropy
+---------------------------------------
+
+name: lenna
+entropy: 6.969829819681192
+
+name: panda
+entropy: 6.1803264080839835
+
+name: fruit
+entropy: 6.402598989760433
+
+name: output/encrypted_lenna_128x128
+entropy: 7.628715352272862
+
+name: output/decrypted_lenna_128x128
+entropy: 7.410646785696361
+
+name: output/encrypted_lenna_256x256
+entropy: 7.628202737432426
+
+name: output/decrypted_lenna_256x256
+entropy: 7.43126599104901
+
+name: output/encrypted_lenna_512x512
+entropy: 7.632137650861018
+
+name: output/decrypted_lenna_512x512
+entropy: 7.445054651331482
+
+name: output/encrypted_panda_128x128
+entropy: 7.626121279243165
+
+name: output/decrypted_panda_128x128
+entropy: 7.495653668375669
+
+name: output/encrypted_panda_256x256
+entropy: 7.629347370168353
+
+name: output/decrypted_panda_256x256
+entropy: 7.504334588942626
+
+name: output/encrypted_panda_512x512
+entropy: 7.635399685183768
+
+name: output/decrypted_panda_512x512
+entropy: 7.510767251763619
+
+name: output/encrypted_fruit_128x128
+entropy: 7.621519856999074
+
+name: output/decrypted_fruit_128x128
+entropy: 7.538118665952052
+
+name: output/encrypted_fruit_256x256
+entropy: 7.630055646286033
+
+name: output/decrypted_fruit_256x256
+entropy: 7.541590374159421
+
+name: output/encrypted_fruit_512x512
+entropy: 7.631220226425691
+
+name: output/decrypted_fruit_512x512
+entropy: 7.560740234909475
