@@ -23,5 +23,8 @@ scale = (512, 512)
 name = 'lenna'
 generate_images(name, key, encrypt, decrypt, AES.block_size, scale)
 
-histogram(f'decrypted_{name}_{scale[0]}x{scale[1]}')
-histogram(f'encrypted_{name}_{scale[0]}x{scale[1]}')
+# histogram(f'decrypted_{name}_{scale[0]}x{scale[1]}')
+# histogram(f'encrypted_{name}_{scale[0]}x{scale[1]}')
+
+print(f'Decrypted correlation: {correlation(get_decrypted_path(name, 512))}')
+print(f'Encrypted correlation: {correlation(get_encrypted_path(name, 512))}')
