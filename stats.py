@@ -4,6 +4,7 @@ from utils import *
 from time import time
 import matplotlib.pyplot as plt
 import numpy as np
+import skimage.measure
 
 
 def avalanche(encrypt, decrypt):
@@ -72,16 +73,11 @@ def histogram(name):
     plt.close()
 
 
-def entropy(name):
-    image = Image.open(f'{name}.png') 
+def entropy(path):
+    image = Image.open(path) 
     image = image.convert('L')
-    intensities = list(image.getdata())
 
-    marg = np.histogramdd(intensities, bins = 256)[0] / image.size
-    marg = list(filter(lambda p: p > 0, np.ravel(marg)))
-    entropy = -np.sum(np.multiply(marg, np.log2(marg)))
-
-    print(f'entropy: {entropy}')
+    return skimage.measure.shannon_entropy(image)
 
 
 def uaci(name, key, encrypt, block_size):
