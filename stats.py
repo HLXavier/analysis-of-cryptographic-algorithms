@@ -3,8 +3,8 @@ from PIL import Image
 from utils import *
 from time import time
 import matplotlib.pyplot as plt
-import cv2
 import numpy as np
+
 
 def avalanche(encrypt, decrypt):
     key = random_bytes(16)
@@ -36,39 +36,35 @@ def avalanche(encrypt, decrypt):
     print(f'decrypted text: {hex_to_str(shifted_decrypted)}')
 
 
+def encrypt_image_bytes(image, key, encrypt, block_size):
+    rgb_bytes = b''.join([bytes(pixel) for pixel in image.getdata()])
+    no_pad_size = len(rgb_bytes)
+    rgb_bytes = pad(rgb_bytes, block_size)
+    return encrypt(rgb_bytes, key), no_pad_size
+
+
 def generate_images(name, key, encrypt, decrypt, block_size, scale):
     image = Image.open(f'{name}.png') 
 
     if scale != (512, 512):
         image = image.resize(scale)
 
-    width, height = image.size
-
-    rgb_bytes = b''.join([bytes(pixel) for pixel in image.getdata()])
-
-    no_pad_size = len(rgb_bytes)
-
-    rgb_bytes = pad(rgb_bytes, block_size)
-
-    start = time()
-    encrypted_bytes = encrypt(rgb_bytes, key)
-    print(f'encryption time: {time() - start}')
-
-    start = time()
+    encrypted_bytes, no_pad_size = encrypt_image_bytes(image, key, encrypt, block_size)
     decrypted_bytes = decrypt(encrypted_bytes, key)
-    print(f'decryption time: {time() - start}')
 
-    image = Image.frombytes('RGB', (width, height), encrypted_bytes[:no_pad_size])
-    image.save(f'output/encrypted_{name}_{width}x{height}.png')
+    image = Image.frombytes('RGB', scale, encrypted_bytes[:no_pad_size])
+    image.save(f'output/encrypted_{name}_{scale[0]}x{scale[1]}.png')
 
-    image = Image.frombytes('RGB', (width, height), decrypted_bytes[:no_pad_size])
-    image.save(f'output/decrypted_{name}_{width}x{height}.png')
+    image = Image.frombytes('RGB', scale, decrypted_bytes[:no_pad_size])
+    image.save(f'output/decrypted_{name}_{scale[0]}x{scale[1]}.png')
 
 
 def histogram(name):
-    image = cv2.imread(f'{name}.png', 0)
+    image = Image.open(f'{name}.png') 
+    image = image.convert('L')
+    intensities = list(image.getdata())
 
-    plt.hist(image.ravel(), 256, [0,255], edgecolor='none')
+    plt.hist(intensities, 256, [0,255], edgecolor='none')
     plt.title('histogram')
 
     name = name.replace('output/', '')
@@ -77,10 +73,47 @@ def histogram(name):
 
 
 def entropy(name):
-    image = cv2.imread(f'{name}.png', 0)
+    image = Image.open(f'{name}.png') 
+    image = image.convert('L')
+    intensities = list(image.getdata())
 
-    marg = np.histogramdd(np.ravel(image), bins = 256)[0] / image.size
+    marg = np.histogramdd(intensities, bins = 256)[0] / image.size
     marg = list(filter(lambda p: p > 0, np.ravel(marg)))
     entropy = -np.sum(np.multiply(marg, np.log2(marg)))
 
     print(f'entropy: {entropy}')
+
+
+def uaci(name, key, encrypt, block_size):
+    image1 = Image.open(f'{name}.png')
+    image2 = image1.copy()
+    
+    width, height = image1.size
+
+    x = randint(0, width - 1)
+    y = randint(0, height - 1)
+
+    r = randint(0, 255)
+    g = randint(0, 255)
+    b = randint(0, 255)
+
+    image2.putpixel((x, y), (r, g, b))
+
+    image1, no_pad_size = encrypt_image_bytes(image1, key, encrypt, block_size)
+    image2, _ = encrypt_image_bytes(image2, key, encrypt, block_size)
+
+    image1 = Image.frombytes('RGB', (width, height), image1[:no_pad_size])
+    image2 = Image.frombytes('RGB', (width, height), image2[:no_pad_size])
+
+    image1 = image1.convert('L')
+    image2 = image2.convert('L')
+
+    intensities1 = list(image1.getdata())
+    intensities2 = list(image2.getdata())
+
+    sum = 0
+    for i in range(width*height):
+        sum += abs(intensities1[i] - intensities2[i])
+
+    print(f'uaci: {100 * sum / (width*height * 255)}')
+    

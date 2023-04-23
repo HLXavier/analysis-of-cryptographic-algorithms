@@ -30,13 +30,13 @@ names = ['lenna', 'panda', 'fruit']
 #         generate_images(name, key, encrypt, decrypt, AES.block_size, scale)
 #         print()
 
-hist_names = []
-hist_names = hist_names + names
+# hist_names = []
+# hist_names = hist_names + names
 
-for name in names:
-    for scale in scales:
-        hist_names.append(f'output/encrypted_{name}_{scale[0]}x{scale[1]}')
-        hist_names.append(f'output/decrypted_{name}_{scale[0]}x{scale[1]}')
+# for name in names:
+#     for scale in scales:
+#         hist_names.append(f'output/encrypted_{name}_{scale[0]}x{scale[1]}')
+#         hist_names.append(f'output/decrypted_{name}_{scale[0]}x{scale[1]}')
 
 # for name in hist_names:
 #     print(name)
@@ -44,9 +44,13 @@ for name in names:
 # for name in hist_names:
 #     histogram(name)
         
-for name in hist_names:
-    print(f'name: {name}')
-    entropy(name)
-    print()
+# for name in hist_names:
+#     print(f'name: {name}')
+#     entropy(name)
+#     print()
 
 # avalanche(encrypt, decrypt)
+
+
+# generate_images('lenna', random_bytes(16), encrypt, decrypt, AES.block_size, (512, 512))
+uaci('lenna', random_bytes(16), encrypt, AES.block_size)
