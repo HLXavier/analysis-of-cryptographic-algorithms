@@ -1,66 +1,54 @@
-from Crypto.Util.Padding import pad
 from PIL import Image
 from utils import *
-from time import time
 import matplotlib.pyplot as plt
 import numpy as np
 
 
-def avalanche(encrypt, decrypt):
-    key = random_bytes(16)
-    shifted_key = shift_bit(key)
-    plain_text = random_bytes(16)
+def avalanche(encrypt, encryption_rounds):
+    executions = 100
+    tot = 0
 
-    print(f'key           : {hex_to_str(key)}')
-    print(f'plain text    : {hex_to_str(plain_text)}')
+    for _ in range(executions):
+        plain_text = random_bytes(32)
 
-    encrypted = encrypt(plain_text, key)
+        key = random_bytes(32)
+        shifted_key = shift_bit(key)
 
-    print(f'encrypted text: {hex_to_str(encrypted)}')
+        cipher = encrypt(plain_text, key, encryption_rounds)
+        shifted_cipher = encrypt(plain_text, shifted_key, encryption_rounds)
 
-    decrypted = decrypt(encrypted, key)
+        str_cipher = hex_to_str(cipher).split()
+        str_shifted_cipher = hex_to_str(shifted_cipher).split()
 
-    print(f'decrypted text: {hex_to_str(decrypted)}')
+        similar_bytes = 0
+        for i in range(len(str_cipher)):
+            if str_cipher[i] == str_shifted_cipher[i]:
+                similar_bytes += 1
 
-    print('-' * 10)
-
-    print(f'shifted key   : {hex_to_str(shifted_key)}')
-    print(f'plain text    : {hex_to_str(plain_text)}')
-
-    shifted_encrypted = encrypt(plain_text, shifted_key)
-
-    print(f'encrypted text: {hex_to_str(shifted_encrypted)}')
-
-    shifted_decrypted = decrypt(encrypted, shifted_key)
-
-    print(f'decrypted text: {hex_to_str(shifted_decrypted)}')
+        tot += similar_bytes / len(str_cipher)
 
 
-def encrypt_image_bytes(image, key, encrypt, block_size):
+    print(f'{tot * 100 / executions}% de similaridade entre os bytes.')
+
+
+def generate_images(name, key, encrypt, decrypt):
+    image = Image.open(f'{name}.png')
+    width, height = image.size 
+
     rgb_bytes = b''.join([bytes(pixel) for pixel in image.getdata()])
-    no_pad_size = len(rgb_bytes)
-    rgb_bytes = pad(rgb_bytes, block_size)
-    return encrypt(rgb_bytes, key), no_pad_size
 
+    encrypted_bytes = encrypt(rgb_bytes, key, 1)
+    decrypted_bytes = decrypt(encrypted_bytes, key, 1)
 
-def generate_images(name, key, encrypt, decrypt, block_size, scale):
-    image = Image.open(f'{name}.png') 
+    image = Image.frombytes('RGB', (width, height), encrypted_bytes)
+    image.save(f'output/encrypted_{name}.png')
 
-    if scale != (512, 512):
-        image = image.resize(scale)
-
-    encrypted_bytes, no_pad_size = encrypt_image_bytes(image, key, encrypt, block_size)
-    decrypted_bytes = decrypt(encrypted_bytes, key)
-
-    image = Image.frombytes('RGB', scale, encrypted_bytes[:no_pad_size])
-    image.save(f'output/encrypted_{name}_{scale[0]}x{scale[1]}.png')
-
-    image = Image.frombytes('RGB', scale, decrypted_bytes[:no_pad_size])
-    image.save(f'output/decrypted_{name}_{scale[0]}x{scale[1]}.png')
+    image = Image.frombytes('RGB', (width, height), decrypted_bytes)
+    image.save(f'output/decrypted_{name}.png')
 
 
 def histogram(name):
-    image = Image.open(f'{name}.png') 
+    image = Image.open(f'output/{name}.png') 
     image = image.convert('L')
     intensities = list(image.getdata())
 
@@ -84,6 +72,7 @@ def entropy(name):
     print(f'entropy: {entropy}')
 
 
+# PRECISA SER ATUALIZADO
 def uaci(name, key, encrypt, block_size):
     image1 = Image.open(f'{name}.png')
     image2 = image1.copy()

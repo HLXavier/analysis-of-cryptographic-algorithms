@@ -1,49 +1,16 @@
-key: 7C EC 6B F4 75 7F 47 91 0A B5 F6 7B 93 2D 37 6F
+---------------------------------------
+Avalanche
+---------------------------------------
+Média de 100 execuções do AES-128
 
---------------------
-lenna
---------------------
-128x128
-encryption time: 0.0024645328521728516
-decryption time: 7.796287536621094e-05
+O valor representa a porcentagem de
+similaridade entre as cifras das 
+duas chaves. 
 
-256x256
-encryption time: 0.0001933574676513672
-decryption time: 6.890296936035156e-05
 
-512x512
-encryption time: 0.0003902912139892578
-decryption time: 0.0002815723419189453
 
---------------------
-panda
---------------------
-128x128
-encryption time: 0.0001723766326904297
-decryption time: 3.7670135498046875e-05
-
-256x256
-encryption time: 0.00019216537475585938
-decryption time: 9.322166442871094e-05
-
-512x512
-encryption time: 0.0004994869232177734
-decryption time: 0.00026035308837890625
-
---------------------
-fruit
---------------------
-128x128
-encryption time: 0.00018453598022460938
-decryption time: 3.743171691894531e-05
-
-256x256
-encryption time: 0.0003097057342529297
-decryption time: 0.00014638900756835938
-
-512x512
-encryption time: 0.00033473968505859375
-decryption time: 0.0004711151123046875
+01 encryption rounds avg: 59.578125%
+02 encryption rounds avg: 57.703125%
 
 
 ---------------------------------------
