@@ -1,8 +1,10 @@
 from PIL import Image
 from utils import *
+from time import time
 import matplotlib.pyplot as plt
 import numpy as np
 import skimage.measure
+
 
 
 def avalanche(encrypt, encryption_rounds):
@@ -36,10 +38,12 @@ def generate_images(name, key, encrypt, decrypt):
     image = Image.open(f'{name}.png')
     width, height = image.size 
 
+    image = image.resize((512, 512))
+
     rgb_bytes = b''.join([bytes(pixel) for pixel in image.getdata()])
 
-    encrypted_bytes = encrypt(rgb_bytes, key, 1)
-    decrypted_bytes = decrypt(encrypted_bytes, key, 1)
+    encrypted_bytes = encrypt(rgb_bytes, key)
+    decrypted_bytes = decrypt(encrypted_bytes, key)
 
     image = Image.frombytes('RGB', (width, height), encrypted_bytes)
     image.save(f'output/encrypted_{name}.png')
@@ -49,15 +53,20 @@ def generate_images(name, key, encrypt, decrypt):
 
 
 def histogram(name):
-    image = Image.open(f'output/{name}.png') 
+    image = Image.open(f'output/encrypted_{name}.png') 
     image = image.convert('L')
     intensities = list(image.getdata())
 
     plt.hist(intensities, 256, [0,255], edgecolor='none')
-    plt.title('histogram')
+
+    plt.title(name.capitalize())
+    plt.xlabel('Intensidade')
+    plt.ylabel('Quantidade de pixels')
+
+    if ('fruit' in name): plt.title('Frutas')
 
     name = name.replace('output/', '')
-    plt.savefig(f'hist/{name}_hist.png')
+    plt.savefig(f'hist/aes_{name}_hist.png')
     plt.close()
 
 
