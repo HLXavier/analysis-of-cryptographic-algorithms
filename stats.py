@@ -6,15 +6,19 @@ import numpy as np
 import skimage.measure
 
 
+<<<<<<< HEAD
 
 def avalanche(encrypt, encryption_rounds):
+=======
+def avalanche(encrypt, encryption_rounds, key_size):
+>>>>>>> refs/remotes/origin/master
     executions = 100
     tot = 0
 
     for _ in range(executions):
         plain_text = random_bytes(32)
 
-        key = random_bytes(32)
+        key = random_bytes(key_size)
         shifted_key = shift_bit(key)
 
         cipher = encrypt(plain_text, key, encryption_rounds)
@@ -52,21 +56,21 @@ def generate_images(name, key, encrypt, decrypt):
     image.save(f'output/decrypted_{name}.png')
 
 
-def histogram(name):
-    image = Image.open(f'output/encrypted_{name}.png') 
+def histogram(image_path, output_path):
+    image = Image.open(image_path) 
     image = image.convert('L')
     intensities = list(image.getdata())
 
     plt.hist(intensities, 256, [0,255], edgecolor='none')
 
-    plt.title(name.capitalize())
     plt.xlabel('Intensidade')
     plt.ylabel('Quantidade de pixels')
 
-    if ('fruit' in name): plt.title('Frutas')
+    if ('lenna' in image_path): plt.title('Lenna')
+    if ('panda' in image_path): plt.title('Panda')
+    if ('fruit' in image_path): plt.title('Frutas')
 
-    name = name.replace('output/', '')
-    plt.savefig(f'hist/aes_{name}_hist.png')
+    plt.savefig(output_path)
     plt.close()
 
 
