@@ -39,8 +39,8 @@ def histogram(name):
     plt.savefig(f'output/{name}_hist.png')
     plt.close()
 
-def correlation(path):
-    image = Image.open(path)
+def correlation(file_path, output_path):
+    image = Image.open(file_path)
     image = image.convert('L')  
 
     pairs = get_neighboring_pixel_pairs(image)
@@ -49,7 +49,7 @@ def correlation(path):
     plt.scatter(x, y, s=1)
     plt.title('correlation')
 
-    plt.savefig(f'{path[:-4]}_correlation.png')
+    plt.savefig(output_path)
     plt.close()
 
     r, p = stats.pearsonr(x, y)

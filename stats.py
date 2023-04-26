@@ -5,14 +5,14 @@ import numpy as np
 import skimage.measure
 
 
-def avalanche(encrypt, encryption_rounds):
+def avalanche(encrypt, encryption_rounds, key_size):
     executions = 100
     tot = 0
 
     for _ in range(executions):
         plain_text = random_bytes(32)
 
-        key = random_bytes(32)
+        key = random_bytes(key_size)
         shifted_key = shift_bit(key)
 
         cipher = encrypt(plain_text, key, encryption_rounds)
@@ -48,16 +48,15 @@ def generate_images(name, key, encrypt, decrypt):
     image.save(f'output/decrypted_{name}.png')
 
 
-def histogram(name):
-    image = Image.open(f'output/{name}.png') 
+def histogram(image_path, output_path):
+    image = Image.open(image_path) 
     image = image.convert('L')
     intensities = list(image.getdata())
 
     plt.hist(intensities, 256, [0,255], edgecolor='none')
     plt.title('histogram')
 
-    name = name.replace('output/', '')
-    plt.savefig(f'hist/{name}_hist.png')
+    plt.savefig(output_path)
     plt.close()
 
 
