@@ -6,12 +6,7 @@ import numpy as np
 import skimage.measure
 
 
-<<<<<<< HEAD
-
-def avalanche(encrypt, encryption_rounds):
-=======
 def avalanche(encrypt, encryption_rounds, key_size):
->>>>>>> refs/remotes/origin/master
     executions = 100
     tot = 0
 
@@ -80,10 +75,8 @@ def entropy(path):
 
     return skimage.measure.shannon_entropy(image)
 
-
-# PRECISA SER ATUALIZADO
-def uaci(name, key, encrypt, block_size):
-    image1 = Image.open(f'{name}.png')
+def npcr(path, encrypt, key, rounds):
+    image1 = Image.open(path)
     image2 = image1.copy()
     
     width, height = image1.size
@@ -97,11 +90,14 @@ def uaci(name, key, encrypt, block_size):
 
     image2.putpixel((x, y), (r, g, b))
 
-    image1, no_pad_size = encrypt_image_bytes(image1, key, encrypt, block_size)
-    image2, _ = encrypt_image_bytes(image2, key, encrypt, block_size)
+    image1bytes = b''.join([bytes(pixel) for pixel in image1.getdata()])
+    image2bytes = b''.join([bytes(pixel) for pixel in image2.getdata()])
 
-    image1 = Image.frombytes('RGB', (width, height), image1[:no_pad_size])
-    image2 = Image.frombytes('RGB', (width, height), image2[:no_pad_size])
+    image1 = encrypt(image1bytes, key, rounds)
+    image2 = encrypt(image2bytes, key, rounds)
+
+    image1 = Image.frombytes('RGB', (width, height), image1)
+    image2 = Image.frombytes('RGB', (width, height), image2)
 
     image1 = image1.convert('L')
     image2 = image2.convert('L')
@@ -110,8 +106,44 @@ def uaci(name, key, encrypt, block_size):
     intensities2 = list(image2.getdata())
 
     sum = 0
-    for i in range(width*height):
+    for i in range(width * height):
+        sum += int(intensities1[i] == intensities2[i])
+
+    print(f'npcr: {100 * (sum / (width*height))}')
+
+def uaci(path, encrypt, key, rounds):
+    image1 = Image.open(path)
+    image2 = image1.copy()
+    
+    width, height = image1.size
+
+    x = randint(0, width - 1)
+    y = randint(0, height - 1)
+
+    r = randint(0, 255)
+    g = randint(0, 255)
+    b = randint(0, 255)
+
+    image2.putpixel((x, y), (r, g, b))
+
+    image1bytes = b''.join([bytes(pixel) for pixel in image1.getdata()])
+    image2bytes = b''.join([bytes(pixel) for pixel in image2.getdata()])
+
+    image1 = encrypt(image1bytes, key, rounds)
+    image2 = encrypt(image2bytes, key, rounds)
+
+    image1 = Image.frombytes('RGB', (width, height), image1)
+    image2 = Image.frombytes('RGB', (width, height), image2)
+
+    image1 = image1.convert('L')
+    image2 = image2.convert('L')
+
+    intensities1 = list(image1.getdata())
+    intensities2 = list(image2.getdata())
+
+    sum = 0
+    for i in range(width * height):
         sum += abs(intensities1[i] - intensities2[i])
 
-    print(f'uaci: {100 * sum / (width*height * 255)}')
+    print(f'uaci: {100 * (sum / (width*height * 255))}')
     

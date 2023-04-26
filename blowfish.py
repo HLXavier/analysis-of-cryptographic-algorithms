@@ -41,8 +41,8 @@ B64_CHARS = ''.join((string.ascii_uppercase, string.ascii_lowercase,
                      string.digits, '+/'))
 B64_CHARS_BCRYPT = ''.join(('./', string.ascii_uppercase,
                             string.ascii_lowercase, string.digits))
-B64_TO_BCRYPT = string.maketrans(B64_CHARS, B64_CHARS_BCRYPT)
-B64_FROM_BCRYPT = string.maketrans(B64_CHARS_BCRYPT, B64_CHARS)
+B64_TO_BCRYPT = str.maketrans(B64_CHARS, B64_CHARS_BCRYPT)
+B64_FROM_BCRYPT = str.maketrans(B64_CHARS_BCRYPT, B64_CHARS)
 
 
 def gensalt(log_rounds=12):

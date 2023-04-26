@@ -24,21 +24,24 @@ def avalanche(encrypt):
 key = random_bytes(16)
 
 def experiments(name, encrypt, decrypt):
-    # encrypt
-    crypt_image(encrypt, key, 16, f'lenna.png', f'output/{name}_encrypted_lenna.png')
+    # # encrypt
+    # crypt_image(encrypt, key, 16, f'lenna.png', f'output/{name}_encrypted_lenna.png')
 
-    # decrypt
-    crypt_image(decrypt, key, 16, f'output/{name}_encrypted_lenna.png', f'output/{name}_decrypted_lenna.png')
+    # # decrypt
+    # crypt_image(decrypt, key, 16, f'output/{name}_encrypted_lenna.png', f'output/{name}_decrypted_lenna.png')
 
-    avalanche(encrypt)
+    # avalanche(encrypt)
 
-    # correlation
-    image.correlation(f'output/{name}_encrypted_lenna.png', f'output/{name}_correlation_encrypted_lenna.png')
+    # # correlation
+    # image.correlation(f'output/{name}_encrypted_lenna.png', f'output/{name}_correlation_encrypted_lenna.png')
 
-    entropy = stats.entropy(f'output/{name}_encrypted_lenna.png')
-    print(f'entropy: {entropy}')
+    # entropy = stats.entropy(f'output/{name}_encrypted_lenna.png')
+    # print(f'entropy: {entropy}')
 
-    stats.histogram(f'output/{name}_encrypted_lenna.png', f'output/{name}_histogram_encrypted_lenna.png')
+    # stats.histogram(f'output/{name}_encrypted_lenna.png', f'output/{name}_histogram_encrypted_lenna.png')
+
+    stats.npcr(f'lenna.png', encrypt, key, 10)
+    stats.uaci(f'lenna.png', encrypt, key, 10)
 
 
 
@@ -48,4 +51,5 @@ image.correlation(f'lenna.png', f'output/correlation_lenna.png')
 stats.histogram(f'lenna.png', f'output/histogram_lenna.png')
 
 # run experiments
-experiments('3des', tripleDesEncrypt, tripleDesDecrypt)
+# experiments('3des', tripleDesEncrypt, tripleDesDecrypt)
+experiments('aes', aesEncrypt, aesDecrypt)
