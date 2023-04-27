@@ -3,6 +3,7 @@ from PIL import Image
 from main import *
 import stats
 import image
+from utils import *
 
 # Use this to encrypt or decrypt an image, depending on which method you
 # pass to the crypt parameter
@@ -24,11 +25,11 @@ def avalanche(encrypt):
 key = random_bytes(16)
 
 def experiments(name, encrypt, decrypt):
-    # # encrypt
-    # crypt_image(encrypt, key, 16, f'lenna.png', f'output/{name}_encrypted_lenna.png')
+    # encrypt
+    crypt_image(encrypt, key, 10, f'lenna.png', f'output/{name}_encrypted_lenna.png')
 
-    # # decrypt
-    # crypt_image(decrypt, key, 16, f'output/{name}_encrypted_lenna.png', f'output/{name}_decrypted_lenna.png')
+    # decrypt
+    crypt_image(decrypt, key, 10, f'output/{name}_encrypted_lenna.png', f'output/{name}_decrypted_lenna.png')
 
     # avalanche(encrypt)
 
@@ -47,9 +48,9 @@ def experiments(name, encrypt, decrypt):
 
 
 # setup
-image.correlation(f'lenna.png', f'output/correlation_lenna.png')
-stats.histogram(f'lenna.png', f'output/histogram_lenna.png')
+# image.correlation(f'lenna.png', f'output/correlation_lenna.png')
+# stats.histogram(f'lenna.png', f'output/histogram_lenna.png')
 
 # run experiments
-# experiments('3des', tripleDesEncrypt, tripleDesDecrypt)
-experiments('aes', aesEncrypt, aesDecrypt)
+experiments('3des', desEncrypt, desDecrypt)
+# experiments('aes', aesEncrypt, aesDecrypt)

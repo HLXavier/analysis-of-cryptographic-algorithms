@@ -141,9 +141,9 @@ def uaci(path, encrypt, key, rounds):
     intensities1 = list(image1.getdata())
     intensities2 = list(image2.getdata())
 
-    sum = 0
+    total = 0
     for i in range(width * height):
-        sum += abs(intensities1[i] - intensities2[i])
+        total += abs(intensities1[i] - intensities2[i])
 
-    print(f'uaci: {100 * (sum / (width*height * 255))}')
+    print(f'uaci: {100 * (total / (width * height * 255))}')
     
