@@ -1,74 +1,86 @@
+from sys import argv
 from utils import *
-from stats import *
-from AES import AES
-import tripleDes
-from image import correlation
-import blowfish
-
-def aesEncrypt(plain_text, key, rounds=10):
-    aes = AES(key)
-    aes.nr = rounds
-    return aes.encrypt(plain_text)
+from ciphers import *
+from PIL import Image
+from avalanche import avalanche_effect
+from entropy import entropy
+from image import transform_image
+from histogram import histogram
 
 
-def aesDecrypt(cipher_text, key, rounds=10):
-    aes = AES(key)
-    aes.nr = rounds
-    return aes.decrypt(cipher_text)
+cipher = argv[1] 
+op = argv[2]
 
-def tripleDesEncrypt(plain_text, key, rounds):
-    tdes = tripleDes.triple_des(key, tripleDes.CBC, rounds=rounds)
-    return tdes.encrypt(plain_text)
+ciphers = {
+        'aes': [aes_encrypt, aes_decrypt, 16],
+        '3des': [triple_des_encrypt, triple_des_decrypt, 16]
+    }
 
-def tripleDesDecrypt(plain_text, key, rounds):
-    tdes = tripleDes.triple_des(key, tripleDes.CBC, rounds=rounds)
-    return tdes.decrypt(plain_text)
+encrypt = ciphers[cipher][0]
+decrypt = ciphers[cipher][1]
+key_size = ciphers[cipher][2]
 
-names = ['lenna', 'panda', 'fruit']
 
-# key = random_bytes(16)
-# for name in names:
-    # generate_images(name, key, tripleDesEncrypt, tripleDesDecrypt)
-    # entropy(f'output/encrypted_{name}.png')
-    # correlation(f'output/encrypted_{name}.png')
+def _avalanche():
+    encryption_rounds = int(argv[3])
+
+    key = random_bytes(key_size)
+
+    print(avalanche_effect(encrypt, key, encryption_rounds))
+
+
+def _entropy():
+    path = argv[3]
+
+    image = Image.open(path)
+
+    print(entropy(image)) 
+
+
+def _enc_image():
+    path = argv[3]
+
+    image = Image.open(path)
+    key = random_bytes(key_size)
+    encrypted_image = transform_image(image, encrypt, key)
+
+    text_key = hex_to_str(key).replace(' ', '')
+    print(f'KEY: {text_key}')
+
+    path = path.replace('images/', 'images/encrypted_')
+    encrypted_image.save(path)
+
+
+def _dec_image():
+    path = argv[3]
+    key = argv[4]
+
+    key = separete_hex(key)
+    key = str_to_hex(key)
+
+    image = Image.open(path)
+    encrypted_image = transform_image(image, decrypt, key)
+
+    path = path.replace('images/encrypted_', 'images/decrypted_')
+    encrypted_image.save(path)
     
 
-# generate_images(names[0], random_bytes(24), tripleDesEncrypt, tripleDesDecrypt)
+def _histogram():
+    path = argv[3]
 
-# for name in names:
-#     histogram(f'decrypted_{name}')
-#     histogram(f'encrypted_{name}')
+    image = Image.open(path)
+    title = path.replace('images/', '')
 
-# print(f'Decrypted correlation: {correlation(get_decrypted_path(name, 512))}')
-# print(f'Encrypted correlation: {correlation(get_encrypted_path(name, 512))}')
+    histogram(image, title)
 
-# key = random_bytes(16)
-# shifted_key = shift_bit(key)
-# word = random_bytes(16)
 
-# print('plain text: ' + hex_to_str(word))
-# cipher = aesEncrypt(word, key)
-# shifted_cipher = aesEncrypt(word, shifted_key)
-# print('ciphered 1: ' + hex_to_str(cipher))
-# print('ciphered 2: ' + hex_to_str(shifted_cipher))
+ops = {
+    'avalanche': _avalanche,
+    'entropy': _entropy,
+    'enc-image': _enc_image,
+    'dec-image': _dec_image,
+    'histogram': _histogram
+}
 
-# for i in range(15):
-#     print(f'{i+1} rodadas de criptografia: ', end='')
-#     avalanche(tripleDesEncrypt, i+1, 24)
-
-# key = random_bytes(16)
-# word = random_bytes(5)
-
-# print(hex_to_str(word))
-# word, pad = aesPad(word)
-
-# encrypted = aesEncrypt(word, key)
-
-# print(hex_to_str(encrypted))
-
-# decrypted = aesDecrypt(encrypted, key)
-
-# decrypted = aesUnpad(decrypted, pad)
-
-# print(hex_to_str(decrypted))
-
+op = ops[op]
+op()

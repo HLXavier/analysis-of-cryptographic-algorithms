@@ -2,10 +2,13 @@ from binascii import hexlify
 from os import urandom
 from random import randint
 
+def separete_hex(hex):
+    return ' '.join([hex[i:i+2].upper() for i in range(0, len(hex), 2)])
+
 
 def hex_to_str(hex):
-    hex = hexlify(hex).decode("utf-8")
-    return ' '.join([hex[i:i+2].upper() for i in range(0, len(hex), 2)])
+    hex = hexlify(hex).decode("utf-8").upper()
+    return separete_hex(hex)
 
 
 def str_to_hex(str):
@@ -38,6 +41,14 @@ def str_to_bin(str):
     return ' '.join(bin)
 
 
+def xor(bin1, bin2):
+    diff = 0
+    for i in range(len(bin1)):
+        if bin1[i] != bin2[i]:
+            diff += 1
+    return diff
+
+
 def random_bytes(size):
     return urandom(size)
 
@@ -67,4 +78,4 @@ def shift_bit(bytes):
     str_bytes[byte_pos] = str_byte
 
     return str_to_hex(' '.join(str_bytes))
-
+    
