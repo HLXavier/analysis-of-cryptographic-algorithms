@@ -1,6 +1,7 @@
 from utils import *
 from aes import AES
 import triple_des as triple_des
+import blowfish
 
 
 def aes_encrypt(plain_text, key, rounds=10):
@@ -25,4 +26,12 @@ def triple_des_decrypt(plain_text, key, rounds=1):
     return tdes.decrypt(plain_text)
 
 
+def blowfish_encrypt(plain_text, key, rounds=1):
+    cipher = blowfish.Cipher(key)
+    iv = b"00000000"
+
+    pass
+
+def blowfish_decrypt(cipher_text, key, rounds=10):
+    pass
 
