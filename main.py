@@ -6,6 +6,7 @@ from avalanche import avalanche_effect
 from entropy import entropy
 from image import transform_image
 from histogram import histogram
+from execution_time import time
 
 
 cipher = argv[1] 
@@ -26,7 +27,7 @@ def _avalanche():
 
     key = random_bytes(key_size)
 
-    print(avalanche_effect(encrypt, key, encryption_rounds))
+    print(f'AVALANCHE: {avalanche_effect(encrypt, key, encryption_rounds)}')
 
 
 def _entropy():
@@ -34,7 +35,7 @@ def _entropy():
 
     image = Image.open(path)
 
-    print(entropy(image)) 
+    print(f'ENTROPY: {entropy(image)}') 
 
 
 def _enc_image():
@@ -74,12 +75,24 @@ def _histogram():
     histogram(image, title)
 
 
+def _time():
+    path = argv[3]
+
+    image = Image.open(path)
+    key = random_bytes(key_size)
+    encrypt_image = lambda: transform_image(image, encrypt, key)
+    encryption_time = time(encrypt_image)
+
+    print(f'TIME: {encryption_time}')
+
+
 ops = {
     'avalanche': _avalanche,
     'entropy': _entropy,
     'enc-image': _enc_image,
     'dec-image': _dec_image,
-    'histogram': _histogram
+    'histogram': _histogram,
+    'time': _time,
 }
 
 op = ops[op]

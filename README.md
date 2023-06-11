@@ -76,3 +76,14 @@ Gera o histograma de uma imagem.
 ```
 python main.py aes histogram images/fruits.png
 ```
+
+### Tempo para Criptografar Matriz RGB da Imagem
+Calcula o tempo médio de 15 criptografias da matriz RGB de uma imagem.
+
+#### Parâmetros
+- Caminho (path) para a imagem
+
+#### Exemplos:
+```
+python main.py aes time images/fruits.png
+```
