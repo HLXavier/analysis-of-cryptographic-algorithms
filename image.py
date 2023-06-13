@@ -16,8 +16,8 @@ def change_random_rgb(image):
     return new_image
 
 
-def transform_image(image, function, key):
+def transform_image(image, function, key, rounds=None):
     rgb_bytes = b''.join([bytes(pixel) for pixel in image.getdata()])
-    encrypted_bytes = function(rgb_bytes, key)
+    encrypted_bytes = function(rgb_bytes, key, rounds=rounds)
 
     return Image.frombytes('RGB', image.size, encrypted_bytes)

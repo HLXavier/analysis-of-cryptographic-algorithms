@@ -40,15 +40,17 @@ def _entropy():
 
 def _enc_image():
     path = argv[3]
+    rounds = int(argv[4]) if len(argv) >= 5 else None
 
     image = Image.open(path)
     key = random_bytes(key_size)
-    encrypted_image = transform_image(image, encrypt, key)
+    encrypted_image = transform_image(image, encrypt, key, rounds=rounds)
 
     text_key = hex_to_str(key).replace(' ', '')
     print(f'KEY: {text_key}')
 
-    path = path.replace('images/', 'images/encrypted_')
+    rounds_label = rounds if rounds is not None else "default"
+    path = path.replace('images/', f'images/encrypted_{argv[1]}_{rounds_label}_rounds_')
     encrypted_image.save(path)
 
 
@@ -76,9 +78,12 @@ def _histogram():
 
 
 def _time():
-    path = argv[3]
+    size = int(argv[3])
+    path = argv[4]
 
     image = Image.open(path)
+    image = image.resize((size, size))
+
     key = random_bytes(key_size)
     encrypt_image = lambda: transform_image(image, encrypt, key)
     encryption_time = time(encrypt_image)
