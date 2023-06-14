@@ -401,27 +401,35 @@ class Cipher(object):
     self.S = tuple(tuple(box) for box in S)
     
   @staticmethod
-  def _encrypt(L, R, P, S1, S2, S3, S4, u4_1_pack, u1_4_unpack):
-    for p1, p2 in P[:-1]:
+  def _encrypt(L, R, P, S1, S2, S3, S4, u4_1_pack, u1_4_unpack, rounds=None):
+    _P = P
+    if rounds is not None:
+      _P = P[:(rounds // 2) + 1]
+
+    for p1, p2 in _P[:-1]:
       L ^= p1
       a, b, c, d = u1_4_unpack(u4_1_pack(L))
       R ^= (S1[a] + S2[b] ^ S3[c]) + S4[d] & 0xffffffff
       R ^= p2
       a, b, c, d = u1_4_unpack(u4_1_pack(R))
       L ^= (S1[a] + S2[b] ^ S3[c]) + S4[d] & 0xffffffff
-    p_penultimate, p_last = P[-1]
+    p_penultimate, p_last = _P[-1]
     return R ^ p_last, L ^ p_penultimate
   
   @staticmethod
-  def _decrypt(L, R, P, S1, S2, S3, S4, u4_1_pack, u1_4_unpack):
-    for p2, p1 in P[:0:-1]:
+  def _decrypt(L, R, P, S1, S2, S3, S4, u4_1_pack, u1_4_unpack, rounds=None):
+    _P = P
+    if rounds is not None:
+      _P = P[:(rounds // 2) + 1]
+
+    for p2, p1 in _P[:0:-1]:
       L ^= p1
       a, b, c, d = u1_4_unpack(u4_1_pack(L))
       R ^= (S1[a] + S2[b] ^ S3[c]) + S4[d] & 0xffffffff
       R ^= p2
       a, b, c, d = u1_4_unpack(u4_1_pack(R))
       L ^= (S1[a] + S2[b] ^ S3[c]) + S4[d] & 0xffffffff
-    p_first, p_second = P[0]
+    p_first, p_second = _P[0]
     return R ^ p_first, L ^ p_second
   
   def encrypt_block(self, block):
@@ -654,7 +662,7 @@ class Cipher(object):
     )
     yield plain_block[:extra_bytes]
     
-  def encrypt_cbc(self, data, init_vector):
+  def encrypt_cbc(self, data, init_vector, rounds=None):
     """
     Return an iterator that encrypts `data` using the Cipher-Block Chaining
     (CBC) mode of operation.
@@ -691,17 +699,17 @@ class Cipher(object):
       LR_iter = self._u4_2_iter_unpack(data)
     except struct_error:
       raise ValueError("data is not a multiple of the block-size in length")
-    
     for plain_L, plain_R in LR_iter:
       prev_cipher_L, prev_cipher_R = encrypt(
         prev_cipher_L ^ plain_L,
         prev_cipher_R ^ plain_R,
         P, S1, S2, S3, S4,
-        u4_1_pack, u1_4_unpack
+        u4_1_pack, u1_4_unpack,
+        rounds=rounds
       )
       yield u4_2_pack(prev_cipher_L, prev_cipher_R)
   
-  def decrypt_cbc(self, data, init_vector):
+  def decrypt_cbc(self, data, init_vector, rounds=None):
     """
     Return an iterator that decrypts `data` using the Cipher-Block Chaining
     (CBC) mode of operation.
@@ -743,7 +751,8 @@ class Cipher(object):
       L, R = decrypt(
         cipher_L, cipher_R,
         P, S1, S2, S3, S4,
-        u4_1_pack, u1_4_unpack
+        u4_1_pack, u1_4_unpack,
+        rounds=rounds
       )
       yield u4_2_pack(prev_cipher_L ^ L, prev_cipher_R ^ R)
       prev_cipher_L = cipher_L

@@ -16,7 +16,7 @@ def aes_decrypt(cipher_text, key, rounds=None):
     return aes.decrypt(cipher_text)
 
 
-def triple_des_encrypt(plain_text, key, rounds=16):
+def triple_des_encrypt(plain_text, key, rounds=None):
     tdes = triple_des.triple_des(key, triple_des.CBC, rounds=16 if rounds is None else rounds)
     return tdes.encrypt(plain_text)
 
@@ -28,10 +28,11 @@ def triple_des_decrypt(plain_text, key, rounds=None):
 
 def blowfish_encrypt(plain_text, key, rounds=None):
     cipher = blowfish.Cipher(key)
-    iv = b"00000000"
-
-    pass
+    iv = key[:8]
+    return b"".join(list(cipher.encrypt_cbc(plain_text, iv, rounds=16 if rounds is None else rounds)))
 
 def blowfish_decrypt(cipher_text, key, rounds=None):
-    pass
+    cipher = blowfish.Cipher(key)
+    iv = key[:8]
+    return b"".join(list(cipher.decrypt_cbc(cipher_text, iv, rounds=16 if rounds is None else rounds)))
 

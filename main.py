@@ -7,15 +7,18 @@ from entropy import entropy
 from image import transform_image
 from histogram import histogram
 from execution_time import time
+from correlation import correlation
+from npcr_uaci import npcr_uaci
 
 
 cipher = argv[1] 
 op = argv[2]
 
 ciphers = {
-        'aes': [aes_encrypt, aes_decrypt, 16],
-        '3des': [triple_des_encrypt, triple_des_decrypt, 16]
-    }
+    'aes': [aes_encrypt, aes_decrypt, 16],
+    '3des': [triple_des_encrypt, triple_des_decrypt, 16],
+    'blowfish': [blowfish_encrypt, blowfish_decrypt, 16],
+}
 
 encrypt = ciphers[cipher][0]
 decrypt = ciphers[cipher][1]
@@ -91,6 +94,15 @@ def _time():
     print(f'TIME: {encryption_time}')
 
 
+def _correlation():
+    path = argv[3]
+    
+    pearson_correlation = correlation(path, f'plots/correlation_{path.replace("images/", "")}')
+    print('PEARSON CORRELATION: ', pearson_correlation)
+
+def _npcr_uaci():
+    npcr_uaci(argv[3], encrypt, random_bytes(key_size), None)
+
 ops = {
     'avalanche': _avalanche,
     'entropy': _entropy,
@@ -98,6 +110,8 @@ ops = {
     'dec-image': _dec_image,
     'histogram': _histogram,
     'time': _time,
+    'correlation': _correlation,
+    'npcr-uaci': _npcr_uaci,
 }
 
 op = ops[op]
